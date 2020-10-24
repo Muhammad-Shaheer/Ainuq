@@ -9,7 +9,7 @@ const path = require('path');
 app.use(cors());
 app.use(express.json({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-mongoose.connect('mongodb://ayaz:ayaz123@ds061954.mlab.com:61954/gym-app', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://Rizwan:Karachi123@pms.h1aco.mongodb.net/khansamaa?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 app.use('/api', routes);
 
 app.get('/', (req, res) => {

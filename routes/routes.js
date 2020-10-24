@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
-const SubscriptionModel = require('../models/subscription')
+const AdminModel = require('../models/admin');
+const CategoryModel = require('../models/category');
 const asyncMiddleware = require('../utils/asyncMiddleware');
 const status = require('../utils/statusCodes');
 const passwordUtils = require('../utils/passwordHash');
@@ -88,13 +89,44 @@ const userActions = {
             });
         }
     }),
-  
+    createCategory: asyncMiddleware(async (req, res) => {
+        let category = new CategoryModel({...req.body});
+        
+        newCategory =await category.save();
+       if(newCategory){
+        await AdminModel.findOneAndUpdate({_id:req.params.id},{category:newCategory._id})   
+        res.status(status.success.created).json({
+            message: 'Category data saved successfully',
+            data: newCategory,
+            status: 200
+        });
+        
+    }
+    else{
+        res.status(status.success.created).json({
+            message: 'Something went wrong',
+            status: 400
+        });
+    }
+    }),
+    
+    getAdminData: asyncMiddleware(async (req, res) => {
+        let admin = await AdminModel.find({register_as:'admin'}).populate('category');
+
+        res.status(status.success.created).json({
+            message: 'Admin data',
+            data: admin,
+            status: 200
+        });
+    }),
+
+
 };
 
 // User
 router.post('/register', userActions.register)
 router.post('/login', userActions.login)
-router.post('/get-token', jwt.verifyJwt, userActions.order_Creation)
-router.get('/get-data', jwt.verifyJwt, userActions.getData)
+router.get('/admins', userActions.getAdminData)
+router.get('/category/:id', userActions.createCategory)
 
 module.exports = router;
