@@ -1,6 +1,7 @@
-const UserModel = require('../models/user');
+const UserModel = require('../models/menu');
 const AdminModel = require('../models/admin');
 const CategoryModel = require('../models/category');
+const MenuModel = require('../models/menu');
 const asyncMiddleware = require('../utils/asyncMiddleware');
 const status = require('../utils/statusCodes');
 const passwordUtils = require('../utils/passwordHash');
@@ -92,11 +93,13 @@ const userActions = {
         }
     }),
     createCategory: asyncMiddleware(async (req, res) => {
+        req.body.menu='5f281ebd5dea9260b8640e0e';
         let category = new CategoryModel({...req.body});
-        
         newCategory =await category.save();
+        console.log(newCategory)
        if(newCategory){
-        await AdminModel.findOneAndUpdate({_id:req.params.id},{category:newCategory._id})   
+        await AdminModel.findOneAndUpdate({_id:req.params.id},{$push:{category:newCategory._id}},{new:true})
+           
         res.status(status.success.created).json({
             message: 'Category data saved successfully',
             data: newCategory,
@@ -114,7 +117,12 @@ const userActions = {
 
     
     getAdminData: asyncMiddleware(async (req, res) => {
-        let admin = await AdminModel.find({register_as:'admin'}).populate('category');
+        let admin = await AdminModel.find({register_as:'admin'}).populate({
+            path: 'category', 
+            populate: {
+                path: 'menu'
+            }
+        });
 
         res.status(status.success.created).json({
             message: 'Admin data',
@@ -128,31 +136,31 @@ const userActions = {
 
         newAdmin = await admin.save();
         if(newAdmin){
-            async function main() {
-                let testAccount = await nodemailer.createTestAccount();
-                let transporter = nodemailer.createTransport({
-                  host: "smtp.ethereal.email",
-                  port: 587,
-                  secure: false,
-                  auth: {
-                    user: testAccount.user, 
-                    pass: testAccount.pass, 
-                  },
-                });
+            // async function main() {
+            //     let testAccount = await nodemailer.createTestAccount();
+            //     let transporter = nodemailer.createTransport({
+            //       host: "smtp.ethereal.email",
+            //       port: 587,
+            //       secure: false,
+            //       auth: {
+            //         user: testAccount.user, 
+            //         pass: testAccount.pass, 
+            //       },
+            //     });
               
-                let info = await transporter.sendMail({
-                  from: '"Khubaib 👻" <khubaib45@gmail.com>',
-                  to: newAdmin.email ,
-                  subject: `Hi ${newAdmin.username}`, // Subject line
-                  text: `Your username is : ${newAdmin.username}\n` + `Your password is : ${newAdmin.password}`
-                });
+            //     let info = await transporter.sendMail({
+            //       from: '"Khubaib 👻" <khubaib45@gmail.com>',
+            //       to: newAdmin.email ,
+            //       subject: `Hi ${newAdmin.username}`, // Subject line
+            //       text: `Your username is : ${newAdmin.username}\n` + `Your password is : ${newAdmin.password}`
+            //     });
               
-                console.log("Message sent: %s", info.messageId);
-                // Preview only available when sending through an Ethereal account
-                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-              }
+            //     console.log("Message sent: %s", info.messageId);
+            //     // Preview only available when sending through an Ethereal account
+            //     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            //   }
 
-              main();
+            //   main();
               
             res.status(status.success.created).json({
                 message: "New Admin Created Successfully!",
@@ -167,10 +175,55 @@ const userActions = {
             })
         }  
     })
+,
+createMenu: asyncMiddleware(async (req , res) => {
+    let menu = new MenuModel({...req.body});
+
+    newmenu = await menu.save();
+    if(newmenu){
+        // async function main() {
+        //     let testAccount = await nodemailer.createTestAccount();
+        //     let transporter = nodemailer.createTransport({
+        //       host: "smtp.ethereal.email",
+        //       port: 587,
+        //       secure: false,
+        //       auth: {
+        //         user: testAccount.user, 
+        //         pass: testAccount.pass, 
+        //       },
+        //     });
+          
+        //     let info = await transporter.sendMail({
+        //       from: '"Khubaib 👻" <khubaib45@gmail.com>',
+        //       to: newAdmin.email ,
+        //       subject: `Hi ${newAdmin.username}`, // Subject line
+        //       text: `Your username is : ${newAdmin.username}\n` + `Your password is : ${newAdmin.password}`
+        //     });
+          
+        //     console.log("Message sent: %s", info.messageId);
+        //     // Preview only available when sending through an Ethereal account
+        //     console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        //   }
+
+        //   main();
+          
+        res.status(status.success.created).json({
+            message: "New Menu Created Successfully!",
+            data: newmenu,
+            status: 200
+        })
+    } 
+    else{
+        res.status(status.success.created).json({
+            message: "Something went wrong",
+            status: 400
+        })
+    }  
+})
 
 
 };
-
+router.post('/createMenu' , userActions.createMenu)
 // User
 router.post('/register', userActions.register)
 router.post('/login', userActions.login)

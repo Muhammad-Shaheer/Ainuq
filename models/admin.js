@@ -33,10 +33,10 @@ var adminSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    category: {
+    category: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'category'
-    },
+    }],
 });
 
 var adminModel = mongoose.model('ADMINS', adminSchema);

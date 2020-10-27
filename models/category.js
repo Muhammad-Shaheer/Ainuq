@@ -10,6 +10,10 @@ var categorySchema =new mongoose.Schema({
         type:String, 
         required: true, 
         match:/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+    },
+    menu:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'menu'
     }
     });
 
