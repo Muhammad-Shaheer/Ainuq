@@ -9,7 +9,9 @@ const express = require('express');
 const router = express.Router();
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer')
+const nodemailer = require("nodemailer");
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const categoryModel = require('../models/category');
 
 // Ayaz Config
 
@@ -109,6 +111,7 @@ const userActions = {
         });
     }
     }),
+
     
     getAdminData: asyncMiddleware(async (req, res) => {
         let admin = await AdminModel.find({register_as:'admin'}).populate('category');
@@ -120,6 +123,51 @@ const userActions = {
         });
     }),
 
+    createAdmin: asyncMiddleware(async (req , res) => {
+        let admin = new AdminModel({...req.body});
+
+        newAdmin = await admin.save();
+        if(newAdmin){
+            async function main() {
+                let testAccount = await nodemailer.createTestAccount();
+                let transporter = nodemailer.createTransport({
+                  host: "smtp.ethereal.email",
+                  port: 587,
+                  secure: false,
+                  auth: {
+                    user: testAccount.user, 
+                    pass: testAccount.pass, 
+                  },
+                });
+              
+                let info = await transporter.sendMail({
+                  from: '"Khubaib 👻" <khubaib45@gmail.com>',
+                  to: newAdmin.email ,
+                  subject: `Hi ${newAdmin.username}`, // Subject line
+                  text: `Your username is : ${newAdmin.username}\n` + `Your password is : ${newAdmin.password}`
+                });
+              
+                console.log("Message sent: %s", info.messageId);
+                // Preview only available when sending through an Ethereal account
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+              }
+
+              main();
+              
+            res.status(status.success.created).json({
+                message: "New Admin Created Successfully!",
+                data: newAdmin,
+                status: 200
+            })
+        } 
+        else{
+            res.status(status.success.created).json({
+                message: "Something went wrong",
+                status: 400
+            })
+        }  
+    })
+
 
 };
 
@@ -128,5 +176,6 @@ router.post('/register', userActions.register)
 router.post('/login', userActions.login)
 router.get('/admins', userActions.getAdminData)
 router.get('/category/:id', userActions.createCategory)
+router.get('/createadmin' , userActions.createAdmin)
 
 module.exports = router;

@@ -9,16 +9,16 @@ const path = require('path');
 app.use(cors());
 app.use(express.json({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-mongoose.connect('mongodb+srv://Rizwan:Karachi123@pms.h1aco.mongodb.net/khansamaa?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://Rizwan:Karachi123@pms.h1aco.mongodb.net/khansamaa?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify: false});
 app.use('/api', routes);
 
 app.get('/', (req, res) => {
     res.send('Working!!!')
 })
 
-app.get('/error', (req, res) => {
-    throw new Error('BROKEN')
-})
+// app.get('/error', (req, res) => {
+//     throw new Error('BROKEN')
+// })
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
