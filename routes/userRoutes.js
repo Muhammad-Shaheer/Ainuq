@@ -80,6 +80,8 @@ const userActions = {
                 message: 'Something went wrong',
                 status: 400
             });
+
+            
         }
     }),
 
@@ -104,29 +106,7 @@ const userActions = {
 
 
     }),
-
-};
-
-// User
-router.post('/signup', async (req, res) => {
-    let user = await UserModel.findOne({ email: req.body.email });
-    console.log(user);
-    if (user) return res.status(400).send(' User already exists.');
-    user = new User({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        password: req.body.password,
-        email: req.body.email
-    })
-    await user.save()
-    res.send(user)
-}),
-
-
-    router.post('/login', async (req, res) => {
-
-        
-
+    loginUser: asyncMiddleware(async (req, res) => {
         const user = await UserModel.findOne({ email: req.body.email })
 
         if (!user) {
@@ -141,13 +121,20 @@ router.post('/signup', async (req, res) => {
 
         }
     }),
+   
+
+};
+
+
+
+    
+    
 
     router.post('/create-user', userActions.createUser)
 router.get('/get-user/:id', userActions.getUser)
 router.delete('/delete-user/:id', userActions.deleteUser)
 router.put('/update-user/:id', userActions.updateUser)
-// router.post('/create-user/signup', userActions.createUser)
-//  router.post('/login', userActions.createUser)
+  router.post('/login', userActions.loginUser)
 
 
 
