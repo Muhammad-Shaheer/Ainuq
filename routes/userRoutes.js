@@ -140,10 +140,6 @@ router.post('/signup', async (req, res) => {
 
 
         }
-        console .log(user)
-
-
-
     }),
 
     router.post('/create-user', userActions.createUser)
@@ -151,7 +147,7 @@ router.get('/get-user/:id', userActions.getUser)
 router.delete('/delete-user/:id', userActions.deleteUser)
 router.put('/update-user/:id', userActions.updateUser)
 // router.post('/create-user/signup', userActions.createUser)
- router.post('/create-user/login', userActions.createUser)
+//  router.post('/login', userActions.createUser)
 
 
 
