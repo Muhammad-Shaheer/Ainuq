@@ -15,6 +15,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
   console.log('Database is connected!');
 });
+
 // mongoose.connect('mongodb+srv://shaheer:shaheer11@cluster0.qbaxk.mongodb.net/Ainuq?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify: false});
 app.use('/api', routes);
 
