@@ -9,7 +9,13 @@ const path = require('path');
 app.use(cors());
 app.use(express.json({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-mongoose.connect('mongodb+srv://shaheer:shaheer11@cluster0.qbaxk.mongodb.net/Ainuq?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify: false});
+mongoose.connect('mongodb+srv://shaheer:shaheer11@cluster0.qbaxk.mongodb.net/Ainuq?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  console.log('Database is connected!');
+});
+// mongoose.connect('mongodb+srv://shaheer:shaheer11@cluster0.qbaxk.mongodb.net/Ainuq?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true , useFindAndModify: false});
 app.use('/api', routes);
 
 app.get('/', (req, res) => {
