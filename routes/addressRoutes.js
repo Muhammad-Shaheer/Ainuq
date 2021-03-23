@@ -40,7 +40,7 @@ const addressActions = {
     getAddress: asyncMiddleware(async (req, res) => {
         let { id } = req.params;
         console.log(id);
-         let address = await (await AddressModel.findById({ _id: id })).populate('User')
+         let address = await AddressModel.findById({ _id: id }).populate('User')
          if (address) {
              res.status(status.success.created).json({
                  message: 'Address data fetched successfully',
