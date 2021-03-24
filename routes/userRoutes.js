@@ -109,11 +109,13 @@ const userActions = {
     loginUser: asyncMiddleware(async (req, res) => {
         const user = await UserModel.findOne({ email: req.body.email })
 
+        
+
         if (!user) {
             return res.status(400).send('The User not found')
         }
         
-        if  (user&&(req.body.password ===user.password)&&(req.body.email === user.email)) {
+        if  (user&&(req.body.password == user.password)&&(req.body.email == user.email)) {
             res.status(200).send('User Authenticated')
         } else {
             res.status(400).send('User not found')
