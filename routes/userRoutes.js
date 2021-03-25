@@ -100,6 +100,7 @@ const userActions = {
         else {
             res.status(status.success.created).json({
                 message: 'Something went wrong',
+                data:user,
                 status: 400
             });
         }
@@ -109,16 +110,34 @@ const userActions = {
     loginUser: asyncMiddleware(async (req, res) => {
         const user = await UserModel.findOne({ email: req.body.email })
 
-        
+        console.log(user) 
 
         if (!user) {
-            return res.status(400).send('The User not found')
+            res.status(status.success.created).json({
+                message: 'Not Exist',
+                data:user,
+                status: 400
+            });
         }
         
         if  (user&&(req.body.password == user.password)&&(req.body.email == user.email)) {
-            res.status(200).send('User Authenticated')
-        } else {
-            res.status(400).send('User not found')
+
+
+            res.status(status.success.created).json({
+                message: 'Authenticated',
+                data : user,
+                status: 200
+
+});
+
+        } 
+        
+        else {
+            res.status(status.success.created).json({
+                         message: 'User not found',
+                         status: 400
+                     });
+            
 
 
         }
